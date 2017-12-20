@@ -1,0 +1,61 @@
+##
+## File:        Makefile
+##
+
+LIB_DIRS     = -L.
+
+GLIB_INCLUDE = `pkg-config --cflags glib-2.0`
+
+GLIB_LIBS = `pkg-config --libs glib-2.0`
+
+PROGS   = drain createMask createInitFromMask
+	
+OBJLIST = qss_spatial_derivatives3d.o qss_options.o qss_data_arrays.o qss_util3d.o qss_reinitialization3d.o qss_tvd_runge_kutta3d.o qss_grid.o qss_file.o drain_top.o qss_initialization3d.o qss_initialization2d.o constCurvModel.o qss_general_util.o drain_model3d.o
+
+OMP_FLAG = -fopenmp
+
+CC = gcc
+
+
+DEBUG_FLAGS = 
+
+OPTIM_FLAGS = -O3 -funroll-loops -fPIC
+
+all:  $(PROGS)
+
+drain: drain.o $(OBJLIST)
+	$(CC) $(OPTIM_FLAGS) $(DEBUG_FLAGS) $(LIB_DIRS) $(GLIB_LIBS) $(OBJLIST) \
+	drain.o -o $@ $(OMP_FLAG)
+
+createMask: createMask.o $(OBJLIST)
+	$(CC) $(OPTIM_FLAGS) $(DEBUG_FLAGS) $(LIB_DIRS) $(GLIB_LIBS) $(OBJLIST) \
+	createMask.o -o $@ $(OMP_FLAG)
+
+createInitFromMask: createInitFromMask.o $(OBJLIST)
+	$(CC) $(OPTIM_FLAGS) $(DEBUG_FLAGS) $(LIB_DIRS) $(GLIB_LIBS) $(OBJLIST) \
+	createInitFromMask.o -o $@ $(OMP_FLAG)
+
+%.o: %.c %.h
+	$(CC) -c $(OPTIM_FLAGS) $(CFLAGS) $(DEBUG_FLAGS) $(GLIB_INCLUDE) -o $@ $< $(OMP_FLAG) -lm
+
+%.o: %.c
+	$(CC) -c $(OPTIM_FLAGS) $(CFLAGS) $(DEBUG_FLAGS) $(GLIB_INCLUDE) -o $@ $< $(OMP_FLAG) -lm
+
+%.o: %.f
+	gfortran -c $(OPTIM_FLAGS) $(DEBUG_FLAGS) -o $@ $<
+
+
+clean:
+	$(RM) *.o 
+	$(RM) $(PROGS)
+
+spotless:  clean
+	rm -f data_final*
+	rm -f data_init*
+	rm -f out_file*
+	rm -f optionsFile*
+	rm -f phi_*
+	rm -f checkpoint_data*
+	rm -f var_a*
+	rm -f var_b*
+	rm -f external_velocity_x*

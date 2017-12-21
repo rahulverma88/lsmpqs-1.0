@@ -9,7 +9,7 @@ grid = readGridFromBinaryFile('grid.gz');
 
 % Determine file name to be saved
 saveFile_pre = 'drain2d_';
-readFile = 'data_step_2.gz';
+readFile = 'data_step_7.gz';
 saveFile_post = strrep(readFile,'data_','');
 saveFile_post = strrep(saveFile_post,'.gz','');
 saveFile = [saveFile_pre saveFile_post];

@@ -143,7 +143,7 @@ void setThetaOverlap(QSS_DataArrays *p, Grid *g, Options *options)
             options->overlap = 0.5 * g->dx[0];
         else if (theta > 50*rad_factor)
             options->overlap = 1 * g->dx[0];
-        else if (theta > 90*rad_factor)
+        else if (theta > 80*rad_factor)
             options->overlap = 2 * g->dx[0];
     } else {
         for( k = g->klo_fb; k <= g->khi_fb; k++)
@@ -162,7 +162,7 @@ void setThetaOverlap(QSS_DataArrays *p, Grid *g, Options *options)
                         overlap = 0.5 * g->dx[0];
                     else if (theta > 50*rad_factor)
                         overlap = 1 * g->dx[0];
-                    else if (theta > 90*rad_factor)
+                    else if (theta > 80*rad_factor)
                         overlap = 2 * g->dx[0];
                         
                     p->overlap[idx_gb] = overlap;

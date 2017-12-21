@@ -132,16 +132,19 @@ void setThetaOverlap(QSS_DataArrays *p, Grid *g, Options *options)
     
     QSSLIB_REAL rad_factor = 3.14159/180;
     
+    if (g->num_dims == 3) {
     if (~options->use_var_theta)
     {
         if (theta <= 20*rad_factor)
             options->overlap = 0;
         else if (theta <= 40*rad_factor)
-            options->overlap = 3 * g->dx[0];
+            options->overlap = 0.3 * g->dx[0];
         else if (theta <= 50*rad_factor)
-            options->overlap = 3 * g->dx[0];
+            options->overlap = 0.5 * g->dx[0];
         else if (theta > 50*rad_factor)
-            options->overlap = 3 * g->dx[0];
+            options->overlap = 1 * g->dx[0];
+        else if (theta > 90*rad_factor)
+            options->overlap = 2 * g->dx[0];
     } else {
         for( k = g->klo_fb; k <= g->khi_fb; k++)
         {
@@ -154,16 +157,21 @@ void setThetaOverlap(QSS_DataArrays *p, Grid *g, Options *options)
                     if (theta <= 20*rad_factor)
                         overlap = 0;
                     else if (theta <= 40*rad_factor)
-                        overlap = 3 * g->dx[0];
+                        overlap = 0.3 * g->dx[0];
                     else if (theta <= 50*rad_factor)
-                        overlap = 3 * g->dx[0];
+                        overlap = 0.5 * g->dx[0];
                     else if (theta > 50*rad_factor)
-                        overlap = 3 * g->dx[0];
+                        overlap = 1 * g->dx[0];
+                    else if (theta > 90*rad_factor)
+                        overlap = 2 * g->dx[0];
                         
                     p->overlap[idx_gb] = overlap;
                 }
             }
         }                   
+    }
+    } else {
+        options->overlap = 3*g->dx[0];
     }
         
 }

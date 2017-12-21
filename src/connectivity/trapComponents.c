@@ -148,15 +148,44 @@ void trapComponents_mask(QSS_DataArrays *p, Grid *g, Options *o){
     /* add a layer of 1's in slice ilo_fb - 1, to simulate connectivity to reservoir */
     /* That way, any nw blob connected to inlet should become part of  nw-connected phase */
     if (g->num_dims == 3) {
-        for( k = g->klo_fb; k <= g->khi_fb; k++)
-        {
-            for( j = g->jlo_fb; j <= g->jhi_fb; j++)
+        if (o->center_inlet) {
+            k = 0.5*(g->klo_fb + g->khi_fb);
+            i = 0.5*(g->ilo_fb + g->ihi_fb);
+            
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++)
             {
-                 i = g->ilo_fb - 1;
-                 idx_gb = i + j*nx_gb + k*nxy_gb;
-                 p->phi_bin[idx_gb] = 1; // make slice 1 
+                idx_gb = i + j*nx_gb + k*nxy_gb;
+                p->phi_bin[idx_gb] = 1; /* add a column of 1s at center inlet */  
+            }
+            
+        } else {
+            i = g->ilo_fb - 1;
+            for( k = g->klo_fb; k <= g->khi_fb; k++)
+            {
+                for( j = g->jlo_fb; j <= g->jhi_fb; j++)
+                {
+                    idx_gb = i + j*nx_gb + k*nxy_gb;
+                    p->phi_bin[idx_gb] = 1; /* make fb-1 slice 1s to simulate inlet */
+                }
             }
         } 
+    } else { 
+        if (o->center_inlet) {
+        /* if 2d geometry, and center inlet, then add 1 at center point */
+            i = 0.5*(g->ilo_fb + g->ihi_fb);
+            j = 0.5*(g->jlo_fb + g->jhi_fb);
+            idx_gb = i + j*nx_gb;
+            p->phi_bin[idx_gb] = 1;
+            
+        } else {
+            i = g->ilo_fb - 1;
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++)
+            {
+                idx_gb = i + j*nx_gb;
+                p->phi_bin[idx_gb] = 1; /* make fb-1 slice 1s to simulate inlet */
+            }
+        }
+
     } 
     
     
@@ -185,8 +214,10 @@ void trapComponents_mask(QSS_DataArrays *p, Grid *g, Options *o){
     
     SET_DATA_TO_CONSTANT(p->connectivity, g, 0)
     
-    /*--------------------------------------------------------------*/
+    /*--------------------------------------------------------------------------------------*/
     /* Now do it for wetting phase */
+    /*--------------------------------------------------------------------------------------*/
+
     /* Copy wetting phase into scratch1, to generate a masked copy of the wetting phase */
     COPY_DATA(p->scratch1, p->phi, g);
     NEGATE_DATA(p->scratch1, g);
@@ -202,46 +233,88 @@ void trapComponents_mask(QSS_DataArrays *p, Grid *g, Options *o){
     /* add a layer of 1's in slice ihi_fb + 1, to simulate connectivity to outlet */
     /* That way, any w blob connected to outlet should become part of  w-connected phase */
     if (g->num_dims == 3) {
-        for( k = g->klo_fb; k <= g->khi_fb; k++)
-        {
-            for( j = g->jlo_fb; j <= g->jhi_fb; j++)
+        if (o->center_inlet) {
+            /* for Juanes 2d case, add wetting phase on all four sides of domain */
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++) {
+                for (i = g->ilo_gb; i <= g->ihi_gb; i++) {
+                    k = g->klo_fb - 1;
+                    idx_gb = i + j*nx_gb + k*nxy_gb;
+                    p->phi_bin[idx_gb] = 1; 
+                }
+            }
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++) {
+                for (i = g->ilo_gb; i <= g->ihi_gb; i++) {
+                    k = g->khi_fb + 1;
+                    idx_gb = i + j*nx_gb + k*nxy_gb;
+                    p->phi_bin[idx_gb] = 1; 
+                }
+            }
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++) {
+                for (k = g->klo_gb; k <= g->khi_gb; k++) {
+                    i = g->ilo_fb - 1;
+                    idx_gb = i + j*nx_gb + k*nxy_gb;
+                    p->phi_bin[idx_gb] = 1; 
+                }
+            }
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++) {
+                for (k = g->klo_gb; k <= g->khi_gb; k++) {
+                    i = g->ihi_fb + 1;
+                    idx_gb = i + j*nx_gb + k*nxy_gb;
+                    p->phi_bin[idx_gb] = 1; 
+                }
+            }
+        } else {
+            i = g->ihi_fb + 1;
+            for( k = g->klo_fb; k <= g->khi_fb; k++)
             {
-                 i = g->ihi_fb + 1;
-                 idx_gb = i + j*nx_gb + k*nxy_gb;
-                 p->phi_bin[idx_gb] = 1; // make slice 1 
+                for( j = g->jlo_fb; j <= g->jhi_fb; j++)
+                {
+                    idx_gb = i + j*nx_gb + k*nxy_gb;
+                    p->phi_bin[idx_gb] = 1; /* make fb-1 slice 1s to simulate inlet */
+                }
             }
         } 
-    
-    } else {
-    
-    /* for Juanes 2d case, add wetting phase on all four sides of domain */
-        for( j = g->jlo_gb; j <= g->jhi_gb; j++)
-        {
-            i = g->ilo_fb - 1;
-            idx_gb = i + j*nx_gb;
-            p->phi_bin[idx_gb] = 1; 
-        }
-        for( j = g->jlo_gb; j <= g->jhi_gb; j++)
-        {
-            i = g->ihi_fb + 1;
-            idx_gb = i + j*nx_gb;
-            p->phi_bin[idx_gb] = 1; 
-        }
+    } else { 
+        if (o->center_inlet) {
+            /* for Juanes 2d case, add wetting phase on all four sides of domain */
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++)
+            {
+                i = g->ilo_fb - 1;
+                idx_gb = i + j*nx_gb;
+                p->phi_bin[idx_gb] = 1; 
+            }
+            for( j = g->jlo_gb; j <= g->jhi_gb; j++)
+            {
+                i = g->ihi_fb + 1;
+                idx_gb = i + j*nx_gb;
+                p->phi_bin[idx_gb] = 1; 
+            }
         
-        for( i = g->ilo_gb; i <= g->ihi_gb; i++)
-        {
-            j = g->jlo_fb - 1;
-            idx_gb = i + j*nx_gb;
-            p->phi_bin[idx_gb] = 1; 
-        }
+            for( i = g->ilo_gb; i <= g->ihi_gb; i++)
+            {
+                j = g->jlo_fb - 1;
+                idx_gb = i + j*nx_gb;
+                p->phi_bin[idx_gb] = 1; 
+            }
         
-        for( i = g->ilo_gb; i <= g->ihi_gb; i++)
-        {
-            j = g->jhi_fb + 1;
-            idx_gb = i + j*nx_gb;
-            p->phi_bin[idx_gb] = 1; 
+            for( i = g->ilo_gb; i <= g->ihi_gb; i++)
+            {
+                j = g->jhi_fb + 1;
+                idx_gb = i + j*nx_gb;
+                p->phi_bin[idx_gb] = 1; 
+            }
+        } else {
+            i = g->ilo_fb + 1;
+            for( j = g->jlo_fb; j <= g->jhi_fb; j++)
+            {
+                idx_gb = i + j*nx_gb;
+                p->phi_bin[idx_gb] = 1; 
+            }
         }
-    }
+
+    } 
+    
+    
     
     /* Find connectivity for wetting phase */  
     if (g->num_dims == 2)

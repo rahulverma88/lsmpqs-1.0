@@ -54,9 +54,9 @@ int main(int argc, char **argv)
      printf("\n\t./drain input_file data_init grid mask");
      printf("\n"); 
    }
-      
+    
    return_status = drainTop(options,fname_data_in,fname_grid_in,
-                                                               fname_mask_in);   
+                                                              fname_mask_in);   
    /* clean up memory */
    destroyOptions(options);
    return return_status;

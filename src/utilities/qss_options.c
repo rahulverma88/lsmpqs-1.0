@@ -116,7 +116,8 @@ Options *createOptionsDefault(void)
   
   options->use_satn_stop = 1;
   options->conserve_imbibe = 0;
-      
+  options->center_inlet = 0;
+  
   return options;
 }
 
@@ -222,6 +223,12 @@ Options *createOptionsFromInputFile(char *filename)
 	  {  /* 'check_connectivity' */
 	      sscanf(line+n,"%*s %d ",&tmp1);   
 	      options->check_connectivity = tmp1;
+             
+	   }
+	   else if (tolower(line[n+1]) == 'e')
+	  {  /* 'center_inlet' */
+	      sscanf(line+n,"%*s %d ",&tmp1);   
+	      options->center_inlet = tmp1;
              
 	   }
 	}

@@ -146,7 +146,7 @@ typedef struct _Options
    int    print_details;    /* whether to print details (1) or not (0) */ 
    int    use_satn_stop; 
    int    conserve_imbibe;
-   
+   int    center_inlet;
 } Options;
 
 

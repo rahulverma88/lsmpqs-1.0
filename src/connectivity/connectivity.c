@@ -188,56 +188,76 @@ void getMainInd_new(Options *o, QSS_DataArrays *p, Grid *g)
     int i, j, k, idx, nw_x_ind, nw_y_ind, nw_z_ind, w_x_ind, w_y_ind, w_z_ind, ind;
     
     if (g->num_dims == 2) {
-    /* Juanes2d case: inlet is in the center of domain */
     
-    nw_x_ind = g->ilo_fb - 1;//0.5*(g->ilo_fb + g->ihi_fb);
-    nw_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+        if (o->center_inlet) {
+            /* Juanes2d case: inlet is in the center of domain, 
+              wetting outlet is on all four sides */
     
-    o->phi_nw_ind = nw_x_ind + nw_y_ind * (g->grid_dims_ghostbox[0]);
+            nw_x_ind = 0.5*(g->ilo_fb + g->ihi_fb);
+            nw_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
     
-    w_x_ind = g->ilo_fb - 1;
-    w_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
-    o->phi_w_ind = w_x_ind + w_y_ind * (g->grid_dims_ghostbox[0]);
-    /* Copy wetting phase into scratch1, to generate a masked copy of the wetting phase */
-    //COPY_DATA(p->scratch1, p->phi, g);
-    //NEGATE_DATA(p->scratch1, g);
-    //IMPOSE_MASK(p->scratch1, p->mask, p->scratch1, g);
+            o->phi_nw_ind = nw_x_ind + nw_y_ind * (g->grid_dims_ghostbox[0]);
     
-    /* search for a wetting point where no mask is present in the first x-slice */
-    //i = g->ilo_fb;
-    //i = g->ilo_fb - 1;
-    /*
-    for( j = g->jlo_fb; j <= g->jhi_fb; j++) {
-        idx = i + j*(g->grid_dims_ghostbox[0]);
-        if( p->scratch1[idx] < 0) {
-            o->phi_w_ind = idx;
-            break;    
+            w_x_ind = g->ilo_fb - 1;
+            w_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+            o->phi_w_ind = w_x_ind + w_y_ind * (g->grid_dims_ghostbox[0]);
+            
+        } else {
+            nw_x_ind = g->ilo_fb - 1;
+            nw_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+    
+            o->phi_nw_ind = nw_x_ind + nw_y_ind * (g->grid_dims_ghostbox[0]);
+    
+            w_x_ind = g->ilo_fb + 1;
+            w_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+            o->phi_w_ind = w_x_ind + w_y_ind * (g->grid_dims_ghostbox[0]);
+        
+        
         }
-    }  
-    */
     } else if (g->num_dims == 3) {
     
-    /* inlet (or non-wetting index point) is in initial - 1 x- fill box boundary */
-    nw_x_ind = g->ilo_fb - 1;
-    nw_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
-    nw_z_ind = 0.5*(g->klo_fb + g->khi_fb);
+        if (o->center_inlet) {
+            /* inlet (or non-wetting index point) is at center of domain */
+            nw_x_ind = 0.5*(g->ilo_fb + g->ihi_fb);
+            nw_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+            nw_z_ind = 0.5*(g->klo_fb + g->khi_fb);
     
-    /* Start searching near the center */
-    ind = nw_x_ind + nw_y_ind * (g->grid_dims_ghostbox[0]) 
-        + nw_z_ind * (g->grid_dims_ghostbox[0]) * (g->grid_dims_ghostbox[1]);
+            ind = nw_x_ind + nw_y_ind * (g->grid_dims_ghostbox[0]) 
+                + nw_z_ind * (g->grid_dims_ghostbox[0]) * (g->grid_dims_ghostbox[1]);
     
-    o->phi_nw_ind = ind;
+            o->phi_nw_ind = ind;
     
-    /* outlet (or wetting index point) is in last + 1 x-fill box boundary */
-    w_x_ind = g->ihi_fb + 1;
-    w_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
-    w_z_ind = 0.5*(g->klo_fb + g->khi_fb);
+            /* outlet (or wetting index point) is in last + 1 x-fill box boundary */
+            w_x_ind = g->ihi_fb + 1;
+            w_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+            w_z_ind = 0.5*(g->klo_fb + g->khi_fb);
     
-    /* Start searching near the center */
-    ind = w_x_ind + w_y_ind * (g->grid_dims_ghostbox[0]) 
-        + w_z_ind * (g->grid_dims_ghostbox[0]) * (g->grid_dims_ghostbox[1]);
+            ind = w_x_ind + w_y_ind * (g->grid_dims_ghostbox[0]) 
+                + w_z_ind * (g->grid_dims_ghostbox[0]) * (g->grid_dims_ghostbox[1]);
         
-    o->phi_w_ind = ind;
+            o->phi_w_ind = ind;
+                
+        } else {
+            /* inlet (or non-wetting index point) is in initial - 1 x- fill box boundary */
+            nw_x_ind = g->ilo_fb - 1;
+            nw_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+            nw_z_ind = 0.5*(g->klo_fb + g->khi_fb);
+    
+            ind = nw_x_ind + nw_y_ind * (g->grid_dims_ghostbox[0]) 
+                + nw_z_ind * (g->grid_dims_ghostbox[0]) * (g->grid_dims_ghostbox[1]);
+    
+            o->phi_nw_ind = ind;
+    
+            /* outlet (or wetting index point) is in last + 1 x-fill box boundary */
+            w_x_ind = g->ihi_fb + 1;
+            w_y_ind = 0.5*(g->jlo_fb + g->jhi_fb);
+            w_z_ind = 0.5*(g->klo_fb + g->khi_fb);
+    
+            ind = w_x_ind + w_y_ind * (g->grid_dims_ghostbox[0]) 
+                + w_z_ind * (g->grid_dims_ghostbox[0]) * (g->grid_dims_ghostbox[1]);
+        
+            o->phi_w_ind = ind;
+        }
     }
         
 }

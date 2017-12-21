@@ -513,7 +513,8 @@ void  printOptions(Options *options,FILE *fp_out)
  fprintf(fp_out, "  a                    %8g  [ Initial normal velocity (or cap pressure) ]\n", options->a);
  fprintf(fp_out, "  b                    %8g  [ Curvature coefficient   ]\n",options->b);
  fprintf(fp_out, "  dc                   %8g  [ curvature increment/decrement ]\n",options->dc); 
- fprintf(fp_out,"   accuracy  %8s  [ accuracy options: low, medium, high, very_high ]\n",options->accuracy);                                                               
+ fprintf(fp_out,"   space accuracy       %8d [ accuracy options: low, medium, high, very_high ]\n",options->order_space_accur);                                                               
+ fprintf(fp_out,"   time accuracy        %8d  [ accuracy options: low, medium, high, very_high ]\n",options->order_time_accur);                                                               
  fprintf(fp_out, "  theta                %8g  [ contact angle, in radians ]\n",options->theta);
  fprintf(fp_out, "  tplot                %8g  [ intervals for reinit, error ]\n",options->tplot);
  fprintf(fp_out, "  init_step            %8d  [ Initial step (if restarting a stopped simulation) ]\n",options->init_step);
@@ -524,7 +525,8 @@ void  printOptions(Options *options,FILE *fp_out)
  fprintf(fp_out, "  err_check_zone       %8g  [ distance from zero ls to check error ]\n",options->err_check_zone); 
  fprintf(fp_out, "  do_reinit            %8d  [ reinitilize periodically (1) or not (0)]\n",options->do_reinit);
  fprintf(fp_out, "  do_mask              %8d  [ impose mask (1) or not (0)]\n",options->do_mask);
- fprintf(fp_out, "  print_details        %8d [ print details (1) or not (0)   ]\n",options->print_details);                                                                                        
+ fprintf(fp_out, "  print_details        %8d  [ print details (1) or not (0)   ]\n",options->print_details);                                                                                        
+ fprintf(fp_out, "  center_inlet         %8d  [ Inlet at center or not \n", options->center_inlet);
 
 
  fprintf(fp_out, "  -----------------------------------------------------------------------------\n");

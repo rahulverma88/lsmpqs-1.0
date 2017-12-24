@@ -290,6 +290,9 @@ void reinitializeSubcellFix3d(
       
     COPY_DATA(copy,data,g);
     
+    QSS3D_COMPUTE_DISTANCE_FOR_SUBCELL_FIX(distance0, copy, GB_DIMS, FB_DIMS,
+		    &((g->dx)[0]), &((g->dx)[1]),&((g->dx)[2]));
+		    
     #pragma omp parallel default(none) shared(data, lse_rhs, data_next, g, \
         o, dt_r, distance0, copy, t_r, bdry_location_idx, n_steps) 
     {    
@@ -302,8 +305,6 @@ void reinitializeSubcellFix3d(
         cur_klo_fb = g->klo_fb + nslices*cur_thread/num_threads;
         cur_khi_fb = g->klo_fb + nslices*(cur_thread + 1)/num_threads - 1;
                     
-        QSS3D_COMPUTE_DISTANCE_FOR_SUBCELL_FIX(distance0, copy, GB_DIMS, FB_DIMS_PAR,
-		    &((g->dx)[0]), &((g->dx)[1]),&((g->dx)[2]));
 		         
         #pragma omp barrier
         

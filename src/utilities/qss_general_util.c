@@ -171,7 +171,10 @@ void setThetaOverlap(QSS_DataArrays *p, Grid *g, Options *options)
         }                   
     }
     } else {
-        options->overlap = 3*g->dx[0];
+        if (theta <= 20*rad_factor)
+            options->overlap = 0;
+        else
+            options->overlap = 3*g->dx[0];
     }
         
 }

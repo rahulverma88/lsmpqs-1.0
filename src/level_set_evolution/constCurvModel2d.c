@@ -149,11 +149,11 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 		            
 		            #pragma omp barrier
+		             #pragma omp single
+                        COPY_DATA(p->phi_next, p->scratch1, g);	
 		            /* boundary conditions */
                      #pragma omp single
                         signedLinearExtrapolationBCqss(p->scratch1,g,bdry_location_idx);         
-                     #pragma omp single
-                        COPY_DATA(p->phi_next, p->scratch1, g);	
                     /* scratch1 should now have RK_stage2 output. If third order is not desired, phi_next 
                        stores final output */
 
@@ -168,15 +168,16 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 	                
 	                #pragma omp barrier
 	                
-	                QSS2D_TVD_RK3_STAGE3(p->scratch2,GB_DIMS_2D,p->scratch1,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
+	                QSS2D_TVD_RK3_STAGE3(p->scratch2,GB_DIMS_2D,p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 		        
 		            #pragma omp barrier
+		            #pragma omp single
+                        COPY_DATA(p->phi_next, p->scratch2, g);	
 		            /* boundary conditions */
                      #pragma omp single
-                        signedLinearExtrapolationBCqss(p->scratch2,g,bdry_location_idx);
-                     #pragma omp single
-                        COPY_DATA(p->phi_next, p->scratch2, g);	
+                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);
+                     
                     /* scratch3 should now have RK_stage3 output. phi_next stores final output */
                  }
                  
@@ -239,11 +240,11 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
             /* update velocities based on trapped components */
             if (options->conserve_imbibe)
                 IMPOSE_TRAP_VEL_2D(p->mask_nw, p->mask_w, p->normal_velocity, p->curvature_coeff, p->external_velocity_x,
-                    p->external_velocity_y, GB_DIMS_2D, FB_DIMS_2D, &((g->dx)[0]));   
+                    p->external_velocity_y, GB_DIMS_2D, FB_DIMS_2D, &((g->dx)[0]));  
+            
+            MERGE_SETS(p->phi, p->mask_nw, g); 
         }
         
-        /* merge trapped nw phase for ensuring reinitialization, and correct saturations */
-	    MERGE_SETS(p->phi, p->mask_nw, g);
 	    
         fprintf(fp_out, "Reinitializing....");
         reinitializeSubcellFix2d(p->phi,g,options);
@@ -289,6 +290,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
         printf("t = %4.1f\t",t);
         printf("max_abs_err = %4.3f,\t",max_abs_err);
         printf("nw phase satn pct = %4.3f\n", 100*satn);
+        fflush(fp_out);
         
         /* If nw phase saturation isn't changing much, then continue on */
         if (options->use_satn_stop) {
@@ -427,11 +429,12 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 		            
 		            #pragma omp barrier
+		            #pragma omp single
+                        COPY_DATA(p->phi_next, p->scratch1, g);	
 		            /* boundary conditions */
                      #pragma omp single
                         signedLinearExtrapolationBCqss(p->scratch1,g,bdry_location_idx);         
-                     #pragma omp single
-                        COPY_DATA(p->phi_next, p->scratch1, g);	
+                     
                     /* scratch1 should now have RK_stage2 output. If third order is not desired, phi_next 
                        stores final output */
 
@@ -449,11 +452,12 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 		        
 		            #pragma omp barrier
+		            #pragma omp single
+                        COPY_DATA(p->phi_next, p->scratch2, g);	
 		            /* boundary conditions */
                      #pragma omp single
                         signedLinearExtrapolationBCqss(p->scratch2,g,bdry_location_idx);
-                     #pragma omp single
-                        COPY_DATA(p->phi_next, p->scratch2, g);	
+                     
                     /* scratch3 should now have RK_stage3 output. phi_next stores final output */
                  }
                  
@@ -509,13 +513,11 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
             trapComponents_mask(p, g, options);
             reinitializeSubcellFix2d(p->mask_w,g,options);
             reinitializeSubcellFix2d(p->mask_nw,g,options);
+            
+             MERGE_SETS(p->phi, p->mask_nw, g);
         }
         
-        /* merge trapped nw phase for ensuring reinitialization */
-	    MERGE_SETS(p->phi, p->mask_nw, g);
-	    
         fprintf(fp_out, "Reinitializing....");
-        //reinitialize2d_subcell_fix_qss(p,g,options);
         reinitializeSubcellFix2d(p->phi,g,options);
         fprintf(fp_out, "Reinitialized\n");
 
@@ -556,6 +558,7 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
         printf("t = %4.1f\t",t);
         printf("max_abs_err = %4.3f,\t",max_abs_err);
         printf("nw phase satn pct = %4.3f\n", 100*satn);
+        fflush(fp_out);
         
         /* If nw phase saturation isn't changing much, then continue on */
         if (options->use_satn_stop) {

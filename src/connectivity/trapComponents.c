@@ -140,7 +140,7 @@ void trapComponents_mask(QSS_DataArrays *p, Grid *g, Options *o){
 
     QSSLIB_REAL eps = 0;
 
-    MERGE_SETS(p->phi, p->mask_nw, g);
+    //MERGE_SETS(p->phi, p->mask_nw, g);
     
     /* Find connectivity of non-wetting phase first */
     IMPOSE_INT_EPS(p->phi_bin, p->phi, g, eps);
@@ -345,7 +345,7 @@ void trapComponents_mask(QSS_DataArrays *p, Grid *g, Options *o){
     sprintf(fname, "phi_w_conn");
     writeDataArrayInt(p->connectivity, g, fname, GZIP);
     */
-    
+    SET_DATA_TO_CONSTANT(p->scratch1, g, 0);
     free(bin_disconn);
 
 }

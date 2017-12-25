@@ -480,7 +480,7 @@ QSSLIB_REAL constCurvModel3dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 	              GB_DIMS, &(cur_klo_gb), &(cur_khi_gb));
 	            
 	            #pragma omp barrier
-	            if(options->check_connectivity) IMPOSE_MASK_PAR(p->phi, p->mask_nw, p->phi, &(disconn_overlap),
+	           if(options->check_connectivity) IMPOSE_MASK_PAR(p->phi, p->mask_nw, p->phi, &(disconn_overlap),
 	              GB_DIMS, &(cur_klo_gb), &(cur_khi_gb));
 	              
             	#pragma omp barrier

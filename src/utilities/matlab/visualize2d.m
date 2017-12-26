@@ -9,7 +9,7 @@ grid = readGridFromBinaryFile('grid.gz');
 
 % Determine file name to be saved
 saveFile_pre = 'drain2d_';
-readFile = 'data_step_1.gz';
+readFile = 'data_step_3.gz';
 saveFile_post = strrep(readFile,'data_','');
 saveFile_post = strrep(saveFile_post,'.gz','');
 saveFile = [saveFile_pre saveFile_post];
@@ -37,8 +37,8 @@ g = processGrid(g);
 x0 = 1;
 % Increasing y0 moves window up
 y0 = 1;
-x0_width = 1000;
-y0_width = 1000;
+x0_width = 1100;
+y0_width = 1100;
 
 bluemap = [0, 0, 0.3
     0, 0, 0.4

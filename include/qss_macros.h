@@ -149,10 +149,10 @@ extern "C" {
     int idx;                                                                 \
     for(idx = 0; idx < grid->num_gridpts; idx++)                             \
     {                                                                        \
-        phi_1[idx] = ((phi_1[idx] < -phi_2[idx])? phi_1[idx]: -phi_2[idx]);  \
+        phi_1[idx] = (phi_2[idx] > 0) ? -phi_2[idx] : phi_1[idx];  \
     }                                                                       \
 }
-
+//((phi_1[idx] < -phi_2[idx])? phi_1[idx]: -phi_2[idx]);
 //(phi_2[idx] > 0) ? -phi_2[idx] : phi_1[idx]; 
 
 #define MAKE_DISCONN_MASK(mask, bin_disconn, phi, grid)    \

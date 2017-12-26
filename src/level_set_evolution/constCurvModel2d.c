@@ -51,7 +51,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 		        
     satn = vol_phi/vol_pore_sp;
     
-    while( (t < options->tmax) && (max_abs_err > options->eps_stop) && (vol_phi > vol_very_small) && (satn < max_satn) )
+    while( (t < options->tmax) && (max_abs_err > options->eps_stop) )
     { 
         /* outer loop */
         OUTER_STEP++;
@@ -99,7 +99,6 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
             else
                 cur_jhi_gb = cur_jhi_fb;
             
-
             while( dt_sub < options->tplot )
             { 
                 /* inner loop */
@@ -118,9 +117,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 	                    cur_max_H_over_dX = max_H_over_dX;
 	            }
 	
-	            /* 
-	               Barrier to ensure same cur_max_H_over_dX across all threads.
-	            */
+	            /* Barrier to ensure same cur_max_H_over_dX across all threads. */
 	            #pragma omp barrier	            
 	            
 	            /* get final correct dt due to parabolic (curvature) term */
@@ -129,13 +126,16 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 	            QSS2D_RK1_STEP(p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 
+                #pragma omp barrier
+                
                 /* boundary conditions */
                 #pragma omp single
                 {
-                    signedLinearExtrapolationBCqss(p->phi,g,bdry_location_idx);	
+                    signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);	
                     cur_max_H_over_dX = -1;
                     max_H_over_dX = -1;
                 } 
+                
                 /* phi_next should now store the RK_stage1 output */
 	            if (options->order_time_accur >= 2) {
 	                (options->space_deriv_func)(p->phi_next, p->normal_velocity, p->curvature_coeff,
@@ -145,15 +145,19 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 	                
 	                #pragma omp barrier
 	                
-	                QSS2D_TVD_RK2_STAGE2(p->scratch1,GB_DIMS_2D,p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
+	                QSS2D_TVD_RK2_STAGE2(p->scratch2,GB_DIMS_2D,p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 		            
 		            #pragma omp barrier
-		             #pragma omp single
-                        COPY_DATA(p->phi_next, p->scratch1, g);	
+		            #pragma omp single
+		            {
+                       COPY_DATA(p->phi_next, p->scratch2, g);	
+                    }
 		            /* boundary conditions */
                      #pragma omp single
-                        signedLinearExtrapolationBCqss(p->scratch1,g,bdry_location_idx);         
+                     {
+                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);   
+                     }      
                     /* scratch1 should now have RK_stage2 output. If third order is not desired, phi_next 
                        stores final output */
 
@@ -173,14 +177,26 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 		        
 		            #pragma omp barrier
 		            #pragma omp single
+		            {
                         COPY_DATA(p->phi_next, p->scratch2, g);	
+                    }
 		            /* boundary conditions */
                      #pragma omp single
+                    {
                         signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);
+                    }
                      
                     /* scratch3 should now have RK_stage3 output. phi_next stores final output */
                  }
-                 
+                
+                 #pragma omp single
+	             {
+	                SET_DATA_TO_CONSTANT(p->lse_rhs,g,zero);
+	                SET_DATA_TO_CONSTANT(p->scratch1,g,zero);
+	                SET_DATA_TO_CONSTANT(p->scratch2,g,zero);
+	                dt_sub += dt;
+	             }
+	             
 		        #pragma omp barrier
 	            IMPOSE_MASK_PAR_2D(p->phi, p->mask, p->phi_next, &(options->overlap),
 	              GB_DIMS_2D, &(cur_jlo_gb), &(cur_jhi_gb));
@@ -205,11 +221,6 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 	            /* 
 	               Implicit barrier after omp single, so all threads should sync here
 	            */
-	             #pragma omp single
-	            {
-	                SET_DATA_TO_CONSTANT(p->lse_rhs,g,zero);
-	                dt_sub += dt;
-	            }
 	            	    
             }   /* End inner loop */
             
@@ -232,7 +243,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
         
         IMPOSE_MASK(p->phi, p->mask, p->phi, g);
         
-        if(options->check_connectivity) { //if (((int)t % 1) == 0) 
+        if(options->check_connectivity) { 
             trapComponents_mask(p, g, options);
             reinitializeSubcellFix2d(p->mask_w,g,options);
             reinitializeSubcellFix2d(p->mask_nw,g,options);
@@ -255,6 +266,8 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
         QSS2D_MAX_NORM_DIFF_LOCAL(&max_abs_err,p->phi,GB_DIMS_2D, p->phi_prev,
 		        GB_DIMS_2D, FB_DIMS_2D, &(options->err_check_zone));
 	    	    
+	    QSSLIB_REAL vol_phi_old = vol_phi;
+	     
 	    satn_old = satn;
 	    
 	    
@@ -410,13 +423,16 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 	            QSS2D_RK1_STEP(p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 
+                #pragma omp barrier
+                
                 /* boundary conditions */
                 #pragma omp single
                 {
-                    signedLinearExtrapolationBCqss(p->phi,g,bdry_location_idx);	
+                    signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);	
                     cur_max_H_over_dX = -1;
                     max_H_over_dX = -1;
                 } 
+                
                 /* phi_next should now store the RK_stage1 output */
 	            if (options->order_time_accur >= 2) {
 	                (options->space_deriv_func)(p->phi_next, &a, &(options->b),
@@ -425,15 +441,19 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 	                
 	                #pragma omp barrier
 	                
-	                QSS2D_TVD_RK2_STAGE2(p->scratch1,GB_DIMS_2D,p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
+	                QSS2D_TVD_RK2_STAGE2(p->scratch2,GB_DIMS_2D,p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 		            
 		            #pragma omp barrier
 		            #pragma omp single
-                        COPY_DATA(p->phi_next, p->scratch1, g);	
+		            {
+                        COPY_DATA(p->phi_next, p->scratch2, g);	
+                    }
 		            /* boundary conditions */
                      #pragma omp single
-                        signedLinearExtrapolationBCqss(p->scratch1,g,bdry_location_idx);         
+                    {
+                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx); 
+                    }        
                      
                     /* scratch1 should now have RK_stage2 output. If third order is not desired, phi_next 
                        stores final output */
@@ -448,15 +468,19 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 	                
 	                #pragma omp barrier
 	                
-	                QSS2D_TVD_RK3_STAGE3(p->scratch2,GB_DIMS_2D,p->scratch1,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
+	                QSS2D_TVD_RK3_STAGE3(p->scratch2,GB_DIMS_2D,p->phi_next,GB_DIMS_2D,p->phi,GB_DIMS_2D,p->lse_rhs,
 		            GB_DIMS_2D, FB_DIMS_PAR_2D, &dt);
 		        
 		            #pragma omp barrier
 		            #pragma omp single
+		            {
                         COPY_DATA(p->phi_next, p->scratch2, g);	
+                    }
 		            /* boundary conditions */
                      #pragma omp single
-                        signedLinearExtrapolationBCqss(p->scratch2,g,bdry_location_idx);
+                     {
+                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);
+                    }
                      
                     /* scratch3 should now have RK_stage3 output. phi_next stores final output */
                  }
@@ -485,13 +509,16 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 	            /* 
 	               Implicit barrier after omp single, so all threads should sync here
 	            */
-	             #pragma omp single
-	            {
+	              #pragma omp single
+	             {
 	                SET_DATA_TO_CONSTANT(p->lse_rhs,g,zero);
+	                SET_DATA_TO_CONSTANT(p->scratch1,g,zero);
+	                SET_DATA_TO_CONSTANT(p->scratch2,g,zero);
 	                dt_sub += dt;
-	            }
+	             }
 	            	    
             }   /* End inner loop */
+            
             
             double t2 = omp_get_wtime();
             

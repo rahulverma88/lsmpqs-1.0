@@ -70,7 +70,9 @@ void reinitializeMedium2d(
 	        #pragma omp barrier		        
             /* boundary conditions */
             #pragma omp single
-            signedLinearExtrapolationBCqss(data_stage1,g,bdry_location_idx);	 	 	    
+            {
+                signedLinearExtrapolationBCqss(data_stage1,g,bdry_location_idx);
+            }	 	 	    
       
             COMPUTE_REINITIALIZATION_EQN_RHS_2D(lse_rhs, data_stage1, data0, GB_DIMS_2D, 
                 FB_DIMS_PAR_2D, &((g->dx)[0]), &((g->dx)[1]), &use_data0_for_sign);
@@ -85,13 +87,19 @@ void reinitializeMedium2d(
    	   
             /* boundary conditions */
             #pragma omp single
-            signedLinearExtrapolationBCqss(data_next,g,bdry_location_idx); 
+            {
+                signedLinearExtrapolationBCqss(data_next,g,bdry_location_idx); 
+            }
             
             #pragma omp single
-            COPY_DATA(data,data_next,g);
+            {
+                COPY_DATA(data,data_next,g);
+            }
        
             #pragma omp single
-            t_r = t_r + dt_r;   
+            {
+                t_r = t_r + dt_r;   
+            }
         }
     }
     
@@ -168,16 +176,24 @@ void reinitializeSubcellFix2d(
 	        #pragma omp barrier
 		   	 
 	        #pragma omp single
-            signedLinearExtrapolationBCqss(data_next,g,bdry_location_idx);	 	 
+	        {
+             signedLinearExtrapolationBCqss(data_next,g,bdry_location_idx);	 	 
+            }
       
             #pragma omp single
-            COPY_DATA(data,data_next,g);	
+            {
+                COPY_DATA(data,data_next,g);	
+            }
         
             #pragma omp single
-	        SET_DATA_TO_CONSTANT(lse_rhs,g,0); 
+            {
+	            SET_DATA_TO_CONSTANT(lse_rhs,g,0); 
+	        }
        
             #pragma omp single
-            t_r = t_r + dt_r;   
+            {
+                t_r = t_r + dt_r;   
+            }
         }
      }
      free(distance0); free(copy); free(lse_rhs); free(data_next);
@@ -240,7 +256,9 @@ void reinitializeMedium3d(
 		    #pragma omp barrier
 		        
             #pragma omp single
-                signedLinearExtrapolationBCqss(data_stage1,g,bdry_location_idx);	 	 	    
+            {
+             signedLinearExtrapolationBCqss(data_stage1,g,bdry_location_idx);	 	 	   
+            } 
       
             COMPUTE_REINITIALIZATION_EQN_RHS_3D(lse_rhs, data_stage1, data0, GB_DIMS, 
                 FB_DIMS_PAR, &((g->dx)[0]), &((g->dx)[1]),&((g->dx)[2]), &use_data0_for_sign);
@@ -252,14 +270,20 @@ void reinitializeMedium3d(
    	   
    	        #pragma omp barrier
    	        
-            #pragma omp single
+            #pragma omp single 
+            {
                 signedLinearExtrapolationBCqss(data_next,g,bdry_location_idx); 
+            }
             
             #pragma omp single
+            {
                 COPY_DATA(data,data_next,g);
-       
+            }
+            
             #pragma omp single
+            {
                 t_r = t_r + dt_r;   
+            }
                 
             #pragma omp barrier
         }
@@ -325,16 +349,24 @@ void reinitializeSubcellFix3d(
 		   	#pragma omp barrier
 		   	
 	        #pragma omp single
-            signedLinearExtrapolationBCqss(data_next,g,bdry_location_idx);	 	 
+	        {
+                signedLinearExtrapolationBCqss(data_next,g,bdry_location_idx);	 
+            }	 
       
             #pragma omp single
-            COPY_DATA(data,data_next,g);
+            {
+                COPY_DATA(data,data_next,g);
+            }
             	 
             #pragma omp single
-	        SET_DATA_TO_CONSTANT(lse_rhs,g,0);
+	        {
+	         SET_DATA_TO_CONSTANT(lse_rhs,g,0);
+	        }
 	        
             #pragma omp single
-            t_r = t_r + dt_r;   
+            {
+                t_r = t_r + dt_r;   
+            }
         }
         
         

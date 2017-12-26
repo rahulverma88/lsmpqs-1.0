@@ -53,7 +53,7 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 	
 	satn = vol_phi/vol_pore_sp;
 	
-    while( (t < options->tmax)  && (max_abs_err > options->eps_stop) )
+    while( (t < options->tmax) && (max_abs_err > options->eps_stop) )
     { 
         /* outer loop */
         OUTER_STEP++;
@@ -86,6 +86,7 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
             cur_khi_fb = g->klo_fb + nslices*(cur_thread + 1)/num_threads - 1;
             
             double t1 = omp_get_wtime();
+            
             /* Keeping track of thread-local ghost boundaries, mainly for imposing mask */
             if (cur_khi_fb > (g->khi_fb))
 	            cur_khi_fb = (g->khi_fb);
@@ -119,7 +120,7 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 	                    cur_max_H_over_dX = max_H_over_dX;
 	            }
 	
-	            /*  Barrier to ensure same cur_max_H_over_dX across all threads. */
+	            /* Barrier to ensure same cur_max_H_over_dX across all threads. */
 	            #pragma omp barrier	            
 	            
 	            /* get final correct dt due to parabolic (curvature) term */
@@ -152,10 +153,14 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 		            
 		            #pragma omp barrier
 		            #pragma omp single
-                        COPY_DATA(p->phi_next, p->scratch2, g);	
+                    {
+                       COPY_DATA(p->phi_next, p->scratch2, g);	
+                    }
 		            /* boundary conditions */
                      #pragma omp single
-                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);         
+                    {
+                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);       
+                    }  
                      
                     /* scratch1 should now have RK_stage2 output. If third order is not desired, phi_next 
                        stores final output */
@@ -175,10 +180,14 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 		        
 		            #pragma omp barrier
 		            #pragma omp single
+		            {
                         COPY_DATA(p->phi_next, p->scratch2, g);	
+                    }
 		            /* boundary conditions */
                      #pragma omp single
+                    {
                         signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);
+                    }
                      
                     /* scratch3 should now have RK_stage3 output. phi_next stores final output */
                  }
@@ -231,7 +240,6 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
         
         IMPOSE_MASK(p->phi, p->mask, p->phi, g);
         
-        
         if(options->check_connectivity) {
             trapComponents_mask(p, g, options);
             reinitializeSubcellFix3d(p->mask_w, g, options);
@@ -242,7 +250,6 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
                 IMPOSE_TRAP_VEL_3D(p->mask_nw, p->mask_w, p->normal_velocity, p->curvature_coeff, p->external_velocity_x,
                     p->external_velocity_y, p->external_velocity_z, GB_DIMS, FB_DIMS, &((g->dx)[0]));
             
-            /* merge trapped nw phase for ensuring reinitialization, and correct saturations */
 	        MERGE_SETS(p->phi, p->mask_nw, g);
         }
         
@@ -250,8 +257,7 @@ QSSLIB_REAL constCurvModel3d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
         fprintf(fp_out, "Reinitializing....");
         reinitializeSubcellFix3d(p->phi,g,options);
         fprintf(fp_out, "Reinitialized\n");
-
-            
+        
         /* compute stopping criteria */
         /* max abs error */
         QSS3D_MAX_NORM_DIFF_LOCAL(&max_abs_err,p->phi,GB_DIMS, p->phi_prev,
@@ -432,10 +438,14 @@ QSSLIB_REAL constCurvModel3dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 		            
 		            #pragma omp barrier
 		            #pragma omp single
+		            {
                         COPY_DATA(p->phi_next, p->scratch1, g);
+                    }
 		            /* boundary conditions */
                      #pragma omp single
-                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);         
+                     {
+                        signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);     
+                     }    
                      	
                     /* scratch1 should now have RK_stage2 output. If third order is not desired, phi_next 
                        stores final output */
@@ -454,10 +464,14 @@ QSSLIB_REAL constCurvModel3dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 		        
 		            #pragma omp barrier
 		            #pragma omp single
+		            {
                         COPY_DATA(p->phi_next, p->scratch2, g);
+                    }
 		            /* boundary conditions */
                      #pragma omp single
+                    {
                         signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);
+                    }
                      	
                     /* scratch3 should now have RK_stage3 output. phi_next stores final output */
                  }

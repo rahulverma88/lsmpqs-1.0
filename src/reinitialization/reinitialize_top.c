@@ -128,6 +128,9 @@ void reinitializeSubcellFix2d(
       
     COPY_DATA(copy,data,g);
     
+    QSS2D_COMPUTE_DISTANCE_FOR_SUBCELL_FIX(distance0, copy, GB_DIMS_2D, FB_DIMS_2D,
+		    &((g->dx)[0]), &((g->dx)[1]));
+		    
     #pragma omp parallel default(none) shared(data, lse_rhs, data_next, g, cfl_number, \
         o, dt_r, distance0, copy, t_r, bdry_location_idx, n_steps) 
     {    
@@ -141,24 +144,9 @@ void reinitializeSubcellFix2d(
 
         cur_jlo_fb = g->jlo_fb + nslices*cur_thread/num_threads;
         cur_jhi_fb = g->jlo_fb + nslices*(cur_thread + 1)/num_threads - 1;
-        
-    /* Keeping track of thread-local ghost boundaries, mainly for imposing mask */
-        if (cur_jhi_fb > (g->jhi_fb))
-	        cur_jhi_fb = (g->jhi_fb);
-
-        if (cur_thread == 0)
-            cur_jlo_gb = cur_jlo_fb - 3;
-        else
-            cur_jlo_gb = cur_jlo_fb;
-            
-        if (cur_thread == (num_threads - 1))
-            cur_jhi_gb = cur_jhi_fb + 3;
-        else
-            cur_jhi_gb = cur_jhi_fb; 
-            
-        QSS2D_COMPUTE_DISTANCE_FOR_SUBCELL_FIX(distance0, copy, GB_DIMS_2D, FB_DIMS_PAR_2D,
-		    &((g->dx)[0]), &((g->dx)[1]));
 		 
+		#pragma omp barrier
+		
         while(t_r < o->tmax_r )
         {
             #pragma omp single

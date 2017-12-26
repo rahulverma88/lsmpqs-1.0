@@ -72,7 +72,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
             /* Set up variables for multi-threading */
             int cur_thread, cur_jlo_fb, cur_jhi_fb, num_threads, nslices, i;
             int cur_jlo_gb, cur_jhi_gb;
-                       
+            
             cur_thread = omp_get_thread_num();
             num_threads = omp_get_num_threads();
     
@@ -82,7 +82,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 
             cur_jlo_fb = g->jlo_fb + nslices*cur_thread/num_threads;
             cur_jhi_fb = g->jlo_fb + nslices*(cur_thread + 1)/num_threads - 1;
-            
+                        
             double t1 = omp_get_wtime();
             
             /* Keeping track of thread-local ghost boundaries, mainly for imposing mask */
@@ -158,7 +158,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
                      {
                         signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);   
                      }      
-                    /* scratch1 should now have RK_stage2 output. If third order is not desired, phi_next 
+                    /* phi_next should now have RK_stage2 output. If third order is not desired, phi_next 
                        stores final output */
 
 	            }
@@ -186,7 +186,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
                         signedLinearExtrapolationBCqss(p->phi_next,g,bdry_location_idx);
                     }
                      
-                    /* scratch3 should now have RK_stage3 output. phi_next stores final output */
+                    /* phi_next should now have RK_stage3 output. phi_next stores final output */
                  }
                 
                  #pragma omp single
@@ -200,6 +200,8 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
 		        #pragma omp barrier
 	            IMPOSE_MASK_PAR_2D(p->phi, p->mask, p->phi_next, &(options->overlap),
 	              GB_DIMS_2D, &(cur_jlo_gb), &(cur_jhi_gb));
+	           // #pragma omp single
+	            //IMPOSE_MASK(p->phi, p->mask, p->phi_next, g);
 	            
 	            #pragma omp barrier
 	            if(options->check_connectivity) IMPOSE_MASK_PAR_2D(p->phi, p->mask_w, p->phi, &(disconn_overlap),
@@ -226,6 +228,7 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
             
             double t2 = omp_get_wtime();
             
+            
             if (cur_thread == 0)
 	            fprintf(fp_out, "%d threads: Level set time = %lf\n", num_threads, t2 - t1);
 	            
@@ -239,7 +242,6 @@ QSSLIB_REAL constCurvModel2d(Options *options,QSS_DataArrays *p, Grid *g, FILE *
         t += dt_sub;
         
         double t3 = omp_get_wtime();
-        
         
         IMPOSE_MASK(p->phi, p->mask, p->phi, g);
         
@@ -518,7 +520,6 @@ QSSLIB_REAL constCurvModel2dNoVar(Options *options,QSS_DataArrays *p, Grid *g, F
 	             }
 	            	    
             }   /* End inner loop */
-            
             
             double t2 = omp_get_wtime();
             

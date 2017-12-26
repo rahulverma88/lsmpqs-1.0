@@ -141,7 +141,7 @@ c { begin subroutine
           do i=ilo_gb,ihi_gb
             
             if ((mask(i,j) - overlap) .gt. phi(i,j)) then
-               phi_masked(i,j) = mask(i,j)
+               phi_masked(i,j) = mask(i,j) - overlap
             else
                phi_masked(i,j) = phi(i,j)
             endif

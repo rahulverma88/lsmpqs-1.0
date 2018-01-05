@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
             {
                 idx = (i - num_gc) + (j - num_gc)*nx_vox + (k - num_gc)*nx_vox*ny_vox;
                 idx_gb = i + j*nx_gb + k*nxy_gb;
-                if( data[idx] == 1)  p->mask[idx_gb] =  options->dx;  //grain space
+                if( data[idx] == 255)  p->mask[idx_gb] =  options->dx;  //grain space
                 else                  p->mask[idx_gb] = -options->dx; //pore space
                 
             }

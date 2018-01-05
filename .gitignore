@@ -1,4 +1,4 @@
-examples/
-bin/
+examples/*
+bin/*
 *.o
-lib/
+lib/*

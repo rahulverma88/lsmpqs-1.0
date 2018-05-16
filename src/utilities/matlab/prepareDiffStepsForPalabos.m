@@ -1,3 +1,4 @@
+function prepareDiffStepsForPalabos(pairs,interp)
 %{
 pairs = [ [7,18];
           [11,13];
@@ -21,7 +22,7 @@ pairs = [ [7,18];
           [17,18]];
 %}
 npairs = size(pairs,1);
-interp = 1;
+%interp = 1;
 
 
 for i = 1:npairs

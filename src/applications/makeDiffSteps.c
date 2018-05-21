@@ -14,7 +14,12 @@
 #include "qss_util3d.h"
 #include "qss_util2d.h"
 
-
+/*
+    Create lenses trapped between two level set steps at different curvatures.
+    Needs two arguments: argument 1 is the "mask", and argument 2 is the level set
+    which is masked. So if the first level set occupies 70 % of the pore space, and the second
+    occupies 50 %, then the trapped lens should occupy 20% of the pore space.
+*/
 int main(int argc, char **argv)
 {
     /* input filename storage */
@@ -50,6 +55,7 @@ int main(int argc, char **argv)
     	
     sprintf(fname,"diff_steps_%d_%d.raw", init_step, second_step);
     writeDataArrayRaw(p->phi, g, fname, 0);
+
 
     destroyQSSDataArrays(p);
 

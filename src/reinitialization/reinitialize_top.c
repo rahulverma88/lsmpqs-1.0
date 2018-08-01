@@ -1,3 +1,17 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file reinitialize_top.c
+ *
+ * Description: Function definitions for reinitialization algorithms. Both 2D and 3D.
+ *      reinitializeMedium* implements the reinitialization algorithm utilizing the 
+ *      Godunov discretization. The SubcellFix variant is supposed to be more accurate,
+ *      with less mass losses.
+ */
+
 #include <stdlib.h>
 #include <omp.h>
 

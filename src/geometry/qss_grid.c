@@ -1,13 +1,14 @@
-/*
- * File:        lsm_grid.c
- * Copyrights:  (c) 2005 The Trustees of Princeton University and Board of
- *                  Regents of the University of Texas.  All rights reserved.
- *              (c) 2009 Kevin T. Chu.  All rights reserved.
- * Revision:    $Revision: 163 $
- * Modified:    $Date: 2009-02-13 11:37:23 -0800 (Fri, 13 Feb 2009) $
- * Description: Implementation file for grid data structures that support 
- *              serial LSMLIB calculations
- */
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file qss_grid.c
+    
+    Function definitions for grid creation, manipulation and destruction.
+    
+*/
 
 #include <stdio.h>
 #include <stdlib.h>

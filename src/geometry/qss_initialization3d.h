@@ -1,12 +1,19 @@
-/*
- * File:        lsm_initialization3d.h
- * Copyrights:  (c) 2005 The Trustees of Princeton University and Board of
- *                  Regents of the University of Texas.  All rights reserved.
- *              (c) 2009 Kevin T. Chu.  All rights reserved.
- * Revision:    $Revision: 149 $
- * Modified:    $Date: 2009-01-18 00:31:09 -0800 (Sun, 18 Jan 2009) $
- * Description: Header file for 3D initialization functions
- */
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file qss_initialization3d.h
+
+    Provides support for creating level set 
+    functions which possess zero level sets corresponding to common 
+    geometrical objects in three-dimensions.  These can be used as initial 
+    conditions for level set method calculations or masks for computations 
+    in restricted domains.  Whenever possible, the level set function is 
+    set to be an approximate signed distance function.
+             
+*/
 
 #ifndef included_qss_initialization3d_h
 #define included_qss_initialization3d_h
@@ -19,17 +26,6 @@ extern "C" {
 
 
 #include "qss_grid.h"
-
-/*! \file lsm_initialization3d.h
- * 
- * @ref lsm_initialization3d.h provides support for creating level set 
- * functions which possess zero level sets corresponding to common 
- * geometrical objects in three -dimensions.  These can be used as initial 
- * conditions for level set method calculations or masks for computations 
- * in restricted domains.  Whenever possible, the level set function is 
- * set to be an approximate signed distance function.
- *
- */   
 
 
 /*!

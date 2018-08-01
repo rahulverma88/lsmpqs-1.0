@@ -1,3 +1,6 @@
+/*
+    Miscellaneous helper functions implemented in Fortran for 3D cases.
+*/
 #ifndef included_qss_util_h
 #define included_qss_util_h
 
@@ -24,7 +27,13 @@ extern "C" {
 #define QSS3D_VOLUME_REGION_PHI_GREATER_THAN_ZERO                            \
                                        qss3dvolumeregionphigreaterthanzero_
 #define IMPOSE_TRAP_VEL_3D          imposetrapvelocity3d_
-                                       
+
+/*
+    Parallelized imposition of mask: 
+    Imposition of mask in parallel instead of using C macro.
+    The function itself is not parallel, but takes the bounding limits from a domain
+    decomposition algorithm.
+*/                                   
 void IMPOSE_MASK_PAR(
     QSSLIB_REAL *phi_masked,
     QSSLIB_REAL *mask,
@@ -40,6 +49,9 @@ void IMPOSE_MASK_PAR(
     const int *cur_khi_gb
 );
 
+/*
+    Parallelized imposition of mask for the case of varying overlap.
+*/
 void IMPOSE_MASK_PAR_VAR(
     QSSLIB_REAL *phi_masked,
     QSSLIB_REAL *mask,
@@ -55,6 +67,9 @@ void IMPOSE_MASK_PAR_VAR(
     const int *cur_khi_gb
 );
 
+/*
+    Copy data in parallel, for 3D cases.
+*/
 void COPY_DATA_PAR_3D(
     QSSLIB_REAL *phi_copy,
     QSSLIB_REAL *phi_orig,
@@ -77,8 +92,6 @@ void COPY_DATA_PAR_3D(
  *  - field1 (in):           scalar field 1
  *  - field2 (in):           scalar field 2
  *  - *_gb (in):             index range for ghostbox
- *  - *_ib (in):             index range for box to include in norm
- *                           calculation
  *
  * Return value:             none
  *
@@ -106,6 +119,20 @@ void QSS3D_MAX_NORM_DIFF(
   const int *klo_ib, 
   const int *khi_ib);
   
+/*!
+ * QSS3D_MAX_NORM_DIFF_LOCAL() computes the max norm of the difference
+ * between the two specified scalar fields, but within a localized region
+ * around the zero level set.
+ *      
+ * Arguments:
+ *  - max_norm_diff (out):   max norm of the difference between the fields
+ *  - field1 (in):           scalar field 1
+ *  - field2 (in):           scalar field 2
+ *  - *_gb (in):             index range for ghostbox
+ *  - local_zone:            distance from zero level set considered "local"
+ * Return value:             none
+ *
+ */
 void QSS3D_MAX_NORM_DIFF_LOCAL(
   QSSLIB_REAL *max_norm_diff,
   const QSSLIB_REAL *field1,
@@ -203,6 +230,10 @@ void QSS3D_VOLUME_REGION_PHI_GREATER_THAN_ZERO(
   const QSSLIB_REAL *dz,
   const QSSLIB_REAL *epsilon);
 
+/*
+    Function for imposing trapping for the level set velocities.
+    I don't think it is used anymore - is replaced by just imposing masks.
+*/
 void IMPOSE_TRAP_VEL_3D(
   QSSLIB_REAL   *phi_w,
   QSSLIB_REAL   *phi_nw,

@@ -1,3 +1,20 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file imbibe_top.h
+
+    Top level function header for calling the imbibition constant curvature model in both 2D
+    and 3D. 
+    
+    Reads in input data, makes sure everything is consistent. Essentially works as an error
+    check for input data. Also writes out final data step.
+             
+*/
+
+
 #ifndef INCLUDED_IMBIBE_TOP_H
 #define INCLUDED_IMBIBE_TOP_H
 

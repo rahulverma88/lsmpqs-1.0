@@ -1,10 +1,5 @@
 /*
- * File:        lsm_macros.h
- * Copyrights:  (c) 2005 The Trustees of Princeton University and Board of
- *                  Regents of the University of Texas.  All rights reserved.
- *              (c) 2009 Kevin T. Chu.  All rights reserved.
- * Revision:    $Revision: 149 $
- * Modified:    $Date: 2009-01-18 00:31:09 -0800 (Sun, 18 Jan 2009) $
+ * File:        qss_macros.h
  * Description: Header file with helpful macros for manipulating data arrays
  */
 
@@ -19,10 +14,10 @@ extern "C" {
 #endif
 
 
-/*! \file lsm_macros.h
+/*! \file qss_macros.h
  *
  * \brief
- * @ref lsm_macros.h provides some helpful macros for manipulating data 
+ * @ref qss_macros.h provides some helpful macros for manipulating data 
  * arrays.
  *
  */
@@ -90,6 +85,15 @@ extern "C" {
   }                                                                        \
 }
 
+/*!
+ * IMPOSE_UCHAR() imposes 0 where level set is negative, and 1 otherwise.
+ *
+ * Arguments:
+ *  - phi_uchar (out):  unsigned char array
+ *  - phi (in):          array containing original values of phi
+ *  - grid (in):         pointer to Grid 
+ *
+ */
 #define IMPOSE_UCHAR(phi_uchar, phi, grid)                           \
 {                                                                          \
   int idx;                                                                 \
@@ -99,6 +103,15 @@ extern "C" {
   }                                                                        \
 }
 
+/*!
+ * IMPOSE_INT() imposes 0 where level set is negative, and 1 otherwise.
+ *
+ * Arguments:
+ *  - phi_int (out):  unsigned int array
+ *  - phi (in):          array containing original values of phi
+ *  - grid (in):         pointer to Grid 
+ *
+ */
 #define IMPOSE_INT(phi_int, phi, grid)                           \
 {                                                                          \
   int idx;                                                                 \
@@ -108,6 +121,15 @@ extern "C" {
   }                                                                        \
 }
 
+/*!
+ * IMPOSE_INT_EPS() imposes 1 where level set < epsilon, and 0 otherwise.
+ *
+ * Arguments:
+ *  - phi_int (out):  unsigned int array
+ *  - phi (in):          array containing original values of phi
+ *  - grid (in):         pointer to Grid 
+ *
+ */
 #define IMPOSE_INT_EPS(phi_int, phi, grid, eps)                           \
 {                                                                          \
   int idx;                                                                 \
@@ -117,6 +139,13 @@ extern "C" {
   }                                                                        \
 }
 
+/*!
+ * IMPOSE_CONN() imposes connectivity information on some array.
+ * For example, if some cell is not connected to anything (=0), it sets the value
+ * to zero.
+ * 
+ * Not used anymore.
+ */
 #define IMPOSE_CONN(data_conn, conn, grid, val)                           \
 {                                                                          \
   int idx;                                                                 \
@@ -124,6 +153,9 @@ extern "C" {
     data_conn[idx] = (conn[idx] == 0) ? val : data_conn[idx];       \
 }
 
+/*!
+ *  Not used anymore
+ */
 #define GET_BIN_VELOCITY(bin_vel, connectivity, grid, main_comp_val)    \
 {                                                                       \
     int idx;                                                                 \
@@ -134,6 +166,13 @@ extern "C" {
     }                                                                       \
 }
 
+/*
+    Gets only the disconnected components.
+    main_comp_val is the value for the main connected component.
+    connectivity contains all the different connected components.
+    bin_vel (out) contains only the disconnected components as a binary array
+    where 1 is disconnected components and 0 is everything else.
+*/
 #define GET_BIN_DISCONN(bin_vel, connectivity, grid, main_comp_val)    \
 {                                                                       \
     int idx;                                                                 \
@@ -144,6 +183,12 @@ extern "C" {
     }                                                                       \
 }
 
+/*
+    Merges two level sets: for example merges the disconnected non-wetting blobs
+    with the main non-wetting phase connected to the reservoir.
+    
+    Used when re-computing connectivity.
+*/
 #define MERGE_SETS(phi_1, phi_2, grid)    \
 {                                                                       \
     int idx;                                                                 \
@@ -155,6 +200,9 @@ extern "C" {
 //((phi_1[idx] < -phi_2[idx])? phi_1[idx]: -phi_2[idx]);
 //(phi_2[idx] > 0) ? -phi_2[idx] : phi_1[idx]; 
 
+/*
+    Constructs disconnected component mask from the binary array bin_disconn.
+*/
 #define MAKE_DISCONN_MASK(mask, bin_disconn, phi, grid)    \
 {                                                                       \
     int idx;                                                                 \
@@ -164,6 +212,12 @@ extern "C" {
     }                                                                       \
 }
 
+/*
+    Imposes AND operation between two binary arrays data_1 and data_2,
+    outputting data_final.
+    
+    I think not used anymore.
+*/
 #define IMPOSE_AND(data_final, data_1, data_2, grid)                           \
 {                                                                          \
   int idx;                                                                 \

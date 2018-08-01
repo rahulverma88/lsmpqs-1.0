@@ -1,3 +1,14 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file qss_general_util.h
+
+    Miscellaneous function headers.
+             
+*/
 #ifndef INCLUDED_QSS_GENERAL_UTIL_H
 #define INCLUDED_QSS_GENERAL_UTIL_H
 

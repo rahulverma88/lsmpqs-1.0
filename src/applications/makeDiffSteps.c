@@ -1,3 +1,32 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file makeDiffSteps.c
+
+    Create lenses trapped between two level set steps at different curvatures.
+    Needs two arguments: argument 1 is the "mask", and argument 2 is the level set
+    which is masked. So if the first level set occupies 70 % of the pore space, and the second
+    occupies 50 %, then the trapped lens should occupy 20% of the pore space.
+    
+    It also checks if the connnected phase percolates. If it does, it output a separate file 
+    which contains the connected component.
+
+    Usage:
+        'makeDiffSteps data_step_1.gz data_step_2.gz'
+    
+    Input:
+        data_step_1 is the "mask", and data_step_2 is the second level set which
+        is to be masked. Essentially, this takes the difference between the two level sets.
+    
+    Output:
+        diff_steps_1_2.raw  : Is a raw file which contains the difference of the two level sets.
+        diff_steps_1_2_connected_only.raw: raw file which contains only the connected component.
+            Is not output if the lense does not connect across from inlet to outlet.		                
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -16,10 +45,7 @@
 #include "qss_util2d.h"
 
 /*
-    Create lenses trapped between two level set steps at different curvatures.
-    Needs two arguments: argument 1 is the "mask", and argument 2 is the level set
-    which is masked. So if the first level set occupies 70 % of the pore space, and the second
-    occupies 50 %, then the trapped lens should occupy 20% of the pore space.
+
 */
 int main(int argc, char **argv)
 {

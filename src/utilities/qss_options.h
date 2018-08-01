@@ -61,7 +61,7 @@ typedef struct _Options
    int    do_reinit;    /* reinitialize periodically (1) or not (0) */
    int    do_mask;      /* impose mask (restrict domain of movement) (1) 
                            or not (0); if 1 then set 'mask' array in
-			   LSM_DataArrays structure */
+			   QSS_DataArrays structure */
 
    QSSLIB_REAL eps_stop;
    
@@ -97,6 +97,8 @@ typedef struct _Options
    /* First step of the simulation, if re-starting a stopped simulation */
    int    init_step;
 
+   /* For non-zero, uniform theta, this sets the overlap between the pore 
+        space and grain */
    QSSLIB_REAL overlap;
    
    /*! stop the simulation when opp. bdry. is touched - specific to drain or imbibe */
@@ -113,8 +115,10 @@ typedef struct _Options
    /*! volume edge boundary condition function, set internally */      			   
    void  (*extrapol_func)();
    
+   /* Function pointer to set the spatial derivative function */
    void  (*space_deriv_func)();
    
+   /* Variables for storing order of spatial and temporal accuracy */
    int order_space_accur;
    int order_time_accur;
    
@@ -131,22 +135,36 @@ typedef struct _Options
    /* Constant C used in variational method */
    QSSLIB_REAL C;
    
+   /* Variables to store max(b)/dx and max(U)/dx, used for computing time step 
+        Not really options. */
    QSSLIB_REAL b_max_over_dx, max_U_over_dx;
    
+   /* Check connectivity or not */
    int check_connectivity;
    
+   /* Variables to store fixed indices for wetting and non-wetting phase reservoirs
+        at outlet/inlet, respectively */
    int phi_w_ind;
    int phi_nw_ind;
+   
+   /* Variable to store how far away from the zero level set to compute max_error.
+        Useful for achieving convergence faster. */
    QSSLIB_REAL err_check_zone;
    
+   /* If 1, then looks for 'theta.gz' in directory, for heterogeneous-wet case */
    int use_var_theta;
+   
+   /* Used for generating 'theta.gz' for cases where only two theta values need to be 
+        imposed. */
    QSSLIB_REAL theta_1;
    QSSLIB_REAL theta_2;
    
    int    print_details;    /* whether to print details (1) or not (0) */ 
-   int    use_satn_stop; 
-   int    conserve_imbibe;
-   int    center_inlet;
+   int    use_satn_stop;    /* Use saturation as a stopping criteria: 
+                                very small changes in satn stop the simulation */
+   int    conserve_imbibe;  /* Conserve wetting phase during imbibition (1) or not (0) */
+   int    center_inlet;     /* Mainly used for 2D Juanes micromodel case where inlet is at center
+                            of domain, and outlet is all four sides. */
 } Options;
 
 

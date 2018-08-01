@@ -1,3 +1,36 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file connectivity.c
+
+    Contains base routines to find connected components given a binary 0/1 2D/3D array,
+    using union-find algorithms.
+    
+    The code was adapted from the following forum:
+    https://stackoverflow.com/questions/44467899/connected-component-labeling-with-diagonal-connections-using-union-find
+    
+    Functions/Structures:
+        (Applicable to both 2D and 3D):
+        union-find struct: contains size of the 2D/3D array, and a pointer to a parent.
+        make_sets: initializes the union-find structure
+        find: returns index of parent
+        do_union: combines sub-trees, making sure one branch does not become too long
+        getMainInd_new: gets the index of the non-wetting/wetting inlet/outlet.
+        getMainInd: is obsolete. There for historical reasons.
+        
+        (2D):
+        unionCoords2d: creates union-find tree structure for 2D array, taking care of the boundaries.
+        findConnectivity2d: finds connected components for 2D array, using unionCoords2d and find.
+        
+        (3D):
+        unionCoords3d: creates union-find tree structure for 3D array, taking care of the boundaries.
+        findConnectivity3d: finds connected components for 3D array, using unionCoords3d and find.
+    
+*/
+
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>

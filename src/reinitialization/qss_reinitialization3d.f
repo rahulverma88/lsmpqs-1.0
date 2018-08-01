@@ -1,6 +1,6 @@
 c***********************************************************************
 c
-c  File:        lsm_reinitialization3d.f
+c  File:        qss_reinitialization3d.f
 c***********************************************************************
 c The algorithms and notation in these subroutines closely follows
 c the discussion in Osher & Fedkiw (2003).
@@ -8,7 +8,7 @@ c***********************************************************************
 
 c***********************************************************************
 c
-c  lsm3dComputeReinitializationEqnRHS() computes the right-hand side of 
+c  qss3dComputeReinitializationEqnRHS() computes the right-hand side of 
 c  the reinitialization equation using a Godunov scheme to select the 
 c  numerical discretization of the sgn(phi) |grad(phi)| term.  
 c  Forward (plus) and backward (minus) spatial derivatives used in 

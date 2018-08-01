@@ -1,12 +1,7 @@
 /*
- * File:        lsm_grid.h
- * Copyrights:  (c) 2005 The Trustees of Princeton University and Board of
- *                  Regents of the University of Texas.  All rights reserved.
- *              (c) 2009 Kevin T. Chu.  All rights reserved.
- * Revision:    $Revision: 149 $
- * Modified:    $Date: 2009-01-18 00:31:09 -0800 (Sun, 18 Jan 2009) $
- * Description: Header file for grid data structures that support serial
- *              LSMLIB calculations
+ * File:        qss_grid.h
+ * Description: Header file for grid data structures that support
+ *              QSSLIB calculations
  */
 
 #ifndef included_qss_grid_h
@@ -18,15 +13,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
-/*! \file lsm_grid.h
- *
- * \brief
- * @ref lsm_grid.h provides support for managing 2D & 3D grids that are 
- * used by serial level set method calculations.
- *
- */
 
 
 /*!

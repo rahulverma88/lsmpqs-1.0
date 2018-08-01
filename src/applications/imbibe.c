@@ -1,3 +1,31 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file imbibe.c
+
+     Progresive Quasistatic (PQS) Algorithm for Imbibition
+
+     Usage:
+       'imbibe in_file data_in grid_in mask_in' - 
+            data_in, grid_in and mask_in are input binary files for
+            fluid level set function, grid structure and masking level set
+            function. If the files are zipped, the names should have .gz 
+            extension.
+     Output:
+      data_init.gz   - data array storing initial level set function 
+                      (NW phase == data_init < 0)
+      data_stepID.gz - data array storing the NW phase level set function
+                      for each simulation step ID
+		      For imbibition, ID starts from 1.
+      grid.gz       - binary data array storing grid information
+      mask.gz       - masking level set function (solid phase == mask > 0)		      
+      out_file      - options, Grid data and any other text output
+                
+*/
+
 /* System headers */
 #include <stdio.h>
 

@@ -1,3 +1,16 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file reinitialize_top.h
+ *
+ * Description: Function headers for reinitialization algorithms. Both 2D and 3D.
+ *      reinitializeMedium* implements the reinitialization algorithm utilizing the 
+ *      Godunov discretization. The SubcellFix variant is supposed to be more accurate,
+ *      with less mass losses.
+ */
 #ifndef INCLUDED_REINIT_TOP_H
 #define INCLUDED_REINIT_TOP_H
 

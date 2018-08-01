@@ -1,3 +1,26 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file createInitFromMask.c
+
+     Pre-processing application for creating an initial level set from pre-existing mask
+     file. It simply chooses the inlet to be lower y-limit, and the outlet to be the upper
+     y-limit. It then creates a hemisphere at the inlet, and masks it according to the 
+     solid phase. 
+
+     Usage: createInitFromMask (mask_file_name) (grid_file_name) (in_file for options)
+         The files are assumed to be in LSM binary format\n"
+       
+    Input:
+        mask_file_name - the LS mask file
+        grid_file_name - binary file containing grid information
+        in_file - text file containing options
+    Output:
+        data_init.gz   - level set function (solid phase == mask > 0)		                
+*/
 
 /* System headers */
 #include <stdlib.h>

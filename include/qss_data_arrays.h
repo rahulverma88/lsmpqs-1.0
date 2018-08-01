@@ -1,5 +1,6 @@
 /*
  * File:        qss_data_arrays.h
+ * Function headers for creating and manipulating QSS data arrays
  */
 
 #ifndef INCLUDED_QSS_DATA_ARRAYS_H
@@ -121,7 +122,7 @@ void allocateMemoryForQSSDataArrays(
 void destroyQSSDataArrays(QSS_DataArrays *qss_data_arrays);
 
 /*!
- * writeDataArray() writes the specified data array out to a binary file.
+ * writeDataArrayQSS() writes the specified data array out to a binary file.
  *
  * The data is output in the following order:
  * -# grid dimensions 
@@ -137,7 +138,7 @@ void destroyQSSDataArrays(QSS_DataArrays *qss_data_arrays);
  * Return value:       none
  *   
  * NOTES: 
- * - writeDataArray() is used for 2d and 3d data arrays.  For 2d
+ * - writeDataArrayQSS() is used for 2d and 3d data arrays.  For 2d
  *   data, the third grid dimension MUST be set to 1 (which is 
  *   the default behavior of the createGrid() function).
  *
@@ -155,7 +156,7 @@ void writeDataArrayUchar(unsigned char *data, Grid *grid, char *file_name,
 void writeDataArrayInt(int *data, Grid *grid, char *file_name,
                     int zip_status);
 /*!
- * readDataArray() loads the data from a binary file into a QSSLIB_REAL
+ * readDataArrayQSS() loads the data from a binary file into a QSSLIB_REAL
  * array and returns it to the user.  
  *   
  * Arguments:

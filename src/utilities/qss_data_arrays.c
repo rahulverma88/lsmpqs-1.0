@@ -1,3 +1,14 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file qss_data_arrays.c
+
+    Function definitions for creating, reading, manipulating, and writing data arrays.
+             
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -13,7 +24,9 @@
 #define QSSLIB_SERIAL_dummy_pointer_uchar  ((unsigned char*)(-1))
 #define QSSLIB_SERIAL_dummy_pointer_sizet  ((size_t*)(-1))
 
-
+/*
+    Allocates dummy pointers for all members of the QSS Data arrays structure.
+*/
 QSS_DataArrays *allocateQSSDataArrays(void)
 {
   QSS_DataArrays *qss_data_arrays;
@@ -53,6 +66,9 @@ QSS_DataArrays *allocateQSSDataArrays(void)
   return  qss_data_arrays;
 }
 
+/*
+    Destroys memory for QSS Data arrays.
+*/
 void destroyQSSDataArrays(QSS_DataArrays *qss_data_arrays)
 {
   if (qss_data_arrays) {
@@ -94,6 +110,9 @@ void destroyQSSDataArrays(QSS_DataArrays *qss_data_arrays)
   }
 }
 
+/*
+    Allocates memory for QSS Data arrays (as opposed to simply pointing to a dummy pointer
+*/
 void  allocateMemoryForQSSDataArrays(
   QSS_DataArrays *qss_data_arrays,
   Grid *grid)
@@ -189,6 +208,9 @@ void  allocateMemoryForQSSDataArrays(
       qss_data_arrays->mask_disconn_init = (QSSLIB_REAL*) malloc(grid->num_gridpts*DSZ);
 }     
 
+/*
+    Writes QSS Data Arrays into binary files.
+*/
 void writeDataArrayQSS(QSSLIB_REAL *data, Grid *grid, char *file_name,int zip_status)
 {
    FILE *fp;
@@ -205,9 +227,9 @@ void writeDataArrayQSS(QSSLIB_REAL *data, Grid *grid, char *file_name,int zip_st
    zipFile(file_name,zip_status);
 }
 
+/* same as writeDataArray, but without dimensions, so file is readable by Paraview */
 void writeDataArrayRaw(QSSLIB_REAL *data, Grid *grid, char *file_name,int zip_status)
 {
-  /* same as writeDataArray, but without dimensions, so file is readable by Paraview */
    FILE *fp;
    
    fp = fopen(file_name,"w");   
@@ -219,6 +241,10 @@ void writeDataArrayRaw(QSSLIB_REAL *data, Grid *grid, char *file_name,int zip_st
    zipFile(file_name,zip_status);
 }
 
+/* 
+    Writes data array which is an unsigned binary character array, instead of the usual
+    floating point array of a level set 
+*/
 void writeDataArrayUchar(unsigned char *data, Grid *grid, char *file_name,int zip_status)
 {
    FILE *fp;
@@ -235,6 +261,11 @@ void writeDataArrayUchar(unsigned char *data, Grid *grid, char *file_name,int zi
    zipFile(file_name,zip_status);
 }
 
+/* 
+    Writes data array which is an unsigned binary character array, instead of the usual
+    floating point array of a level set. Additionally, it only writes out the inner fill box,
+    ignoring the ghost cells.
+*/
 void writeDataArrayUcharFB(unsigned char *data_fb, Grid *g, char *file_name, int zip_status)
 {
    FILE *fp;
@@ -249,6 +280,10 @@ void writeDataArrayUcharFB(unsigned char *data_fb, Grid *g, char *file_name, int
 
 }
 
+/* 
+    Writes data array which is an int array, instead of the usual
+    floating point array of a level set 
+*/
 void writeDataArrayInt(int *data, Grid *grid, char *file_name,int zip_status)
 {
    FILE *fp;
@@ -265,6 +300,10 @@ void writeDataArrayInt(int *data, Grid *grid, char *file_name,int zip_status)
    zipFile(file_name,zip_status);
 }
 
+/* 
+    Reads data array from a binary file as an int array, instead of the usual
+    floating point array of a level set 
+*/
 int *readDataArrayInt(int *grid_dims_ghostbox,char *file_name)
 {
    FILE    *fp;
@@ -302,6 +341,9 @@ int *readDataArrayInt(int *grid_dims_ghostbox,char *file_name)
    return data;
 }
 
+/* 
+    Reads data array from a binary file.
+*/
 QSSLIB_REAL *readDataArrayQSS(int *grid_dims_ghostbox,char *file_name)
 {
    FILE    *fp;

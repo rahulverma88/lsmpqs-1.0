@@ -1,3 +1,27 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file trapComponents.c
+
+    Functions to interface between the level set routines and the connectivity routines.
+    
+    The connectivity routines only work on binarized (0/1) arrays - so the level set arrays 
+    must be converted to binarized representation.
+    
+    
+    Functions/Structures:
+        trapComponents: is obsolete
+        trapComponents_mask: takes the QSS Data Arrays, grid and options as input.
+            Based on the options, it determines the indices of the inlet and outlet, and
+            computes connected components for both wetting (connected to outlet) and 
+            non-wetting phase (connected to inlet) separately.
+            Following that, it constructs the disconnected component masks for each phase.
+    
+*/
+
 #include <time.h>
 #include <stdlib.h>
 #include <stdio.h>

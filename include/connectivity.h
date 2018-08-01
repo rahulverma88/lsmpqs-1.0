@@ -1,3 +1,15 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file connectivity.h
+
+    Header definitions for connectivity functions.
+    
+*/
+
 #ifndef INCLUDED_CONNECTIVITY_H
 #define INCLUDED_CONNECTIVITY_H
 

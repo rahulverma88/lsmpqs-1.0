@@ -1,3 +1,27 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file createMaskUBC.c
+
+     Pre-processing application for converting unsigned binary character files (0,255 etc)
+     to level set representation.
+     
+     In this file, it assumes solid is 255, and pore space is 0. It converts it to
+     a LS signed distance mask, where mask > 0 in grain space, and mask < 0 in pore space.
+
+     Usage:
+       'createMaskUBC ubc_in nx_vox ny_vox nz_vox'
+       
+    Input:
+        ubc_in is an input unsigned binary file. Usually contains the geometry
+        of the pore space.
+        nx_vox, ny_vox, nz_vox are the number of voxels in x, y, and z directions.
+    Output:
+        mask.gz   - masking level set function (solid phase == mask > 0)		                
+*/
 
 /* System headers */
 #include <stdlib.h>

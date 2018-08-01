@@ -1,3 +1,13 @@
+/*
+***********************************************************************
+
+  File:        qss_spatial_derivatives2d.h
+***********************************************************************
+  Function headers for algorithms to compute the 2D spatial derivative
+  terms in the level set equation.
+ 
+***********************************************************************
+*/
 #ifndef INCLUDED_QSS_SPATIAL_DERIVATIVES_2D_H
 #define INCLUDED_QSS_SPATIAL_DERIVATIVES_2D_H
 
@@ -37,7 +47,7 @@
    const QSSLIB_REAL  *dy);
      
 /*! 
- * LSM3D_CENTRAL_GRAD_ORDER2() computes the second-order, central, 
+ * QSS3D_CENTRAL_GRAD_ORDER2() computes the second-order, central, 
  * finite difference approximation to the gradient of \f$ \phi \f$ 
  * using the formula:
  * 

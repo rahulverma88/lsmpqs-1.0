@@ -1,3 +1,18 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file qss_general_util.c
+
+    Miscellaneous function definitions. A lot of these have been replaced by other functions,
+    but they should all still work. The replacements are just better designed functions.
+    These functions are still here as some of the older routines call these functions instead
+    of the new ones.
+             
+*/
+
 #include <stdlib.h>
 
 #include "QSSLIB_config.h"
@@ -12,6 +27,9 @@
 #include "qss_initialization2d.h"
 #include "qss_initialization3d.h"
 
+/*
+    3D reinitialization using subcell fix. Requires the entire QSS Data Arrays structure.           
+*/
 void reinitialize3d_subcell_fix_qss(
     QSS_DataArrays *p,
     Grid *g,
@@ -57,6 +75,10 @@ void reinitialize3d_subcell_fix_qss(
      //free(copy);
 }
 
+/*
+    Based on the accuracy desired within the options structure, set the function 
+    to calculate spatial derivatives. 
+*/
 void setSpaceDerivFunc(Grid *g, Options *options)
 {
     if (g->num_dims == 2) {
@@ -120,6 +142,11 @@ void setSpaceDerivFunc(Grid *g, Options *options)
     }
 }
 
+/*
+    Sets overlap throughout the domain. For uniform theta, the same overlap value is set,
+    based on the value of theta. For non-uniform theta, the overlap value varies throughout.
+    So for non-uniform theta, overlap is an array the same size as the domain.
+*/
 void setThetaOverlap(QSS_DataArrays *p, Grid *g, Options *options)
 {
     
@@ -178,6 +205,10 @@ void setThetaOverlap(QSS_DataArrays *p, Grid *g, Options *options)
     }
         
 }
+
+/*
+   2D reinitialization using subcell fix. Requires the entire QSS Data Arrays structure. 
+*/
 void reinitialize2d_subcell_fix_qss(
     QSS_DataArrays *p,
     Grid *g,
@@ -223,6 +254,10 @@ void reinitialize2d_subcell_fix_qss(
      //free(copy);
 }
 
+/*
+    3D reinitialization of just the mask using subcell fix.
+    Requires the entire QSS Data Arrays structure.
+*/
 void qss_reinitialize_mask(
     QSS_DataArrays *p,
     Grid *g,
@@ -269,6 +304,13 @@ void qss_reinitialize_mask(
      return;
 
 }
+
+/*
+    3D reinitialization of just the mask using subcell fix. Not all boundaries incorporated.
+    Requires the entire QSS Data Arrays structure.
+    
+    Not sure what were the results of playing with this.
+*/
 
 void qss_reinitialize_mask_no_bc(
     QSS_DataArrays *p,
@@ -320,6 +362,11 @@ void qss_reinitialize_mask_no_bc(
 
 }
 
+/*
+    2D reinitialization of just the mask using subcell fix.
+    Requires the entire QSS Data Arrays structure.
+*/
+
 void qss_reinitialize_mask2d(
     QSS_DataArrays *p,
     Grid *g,
@@ -368,7 +415,10 @@ void qss_reinitialize_mask2d(
 }
 
 
-
+/*
+    Apply boundary conditions - for both 2D and 3D. Calls the Fortran library function
+    for the appropriate boundary.
+*/
 void signedLinearExtrapolationBCqss(
   QSSLIB_REAL *phi,
   Grid *grid,
@@ -655,6 +705,9 @@ void signedLinearExtrapolationBCqss(
 
 }
 
+/*
+    Initializes disconnected masks for each phase.
+*/
 void initializeDisconnectedMasks(QSSLIB_REAL *data, Grid *g)
 {
     QSSLIB_REAL    center_x, center_y, center_z, radius;
@@ -674,6 +727,11 @@ void initializeDisconnectedMasks(QSSLIB_REAL *data, Grid *g)
         
 }
  
+/*
+    Reinitializes disconnected masks for 2D cases. 
+    Should be obsolete now, as the new reinitialization functions don't require the entire
+    QSS Data arrays.
+*/
 void qss_reinitializeDisconnectedMask2d(
     QSS_DataArrays *p,
     Grid *g,
@@ -749,6 +807,9 @@ void qss_reinitializeDisconnectedMask2d(
 
 }
 
+/*
+    Creates a reservoir at the inlet for 3D geometries.
+*/
 void createReservoirInlet3d(
     QSS_DataArrays *p,
     Grid *g) 
@@ -771,11 +832,19 @@ void createReservoirInlet3d(
 
 }
     
-
+/*
+    return_1, return_0 and return_0_double are there mainly for cases where OpenMP
+    is not present on a machine. This way, the library still compiles and can be run in serial
+    mode.
+*/
 int return_1(){ return 1;}
 int return_0(){return 0;}
 double return_0_double(){return 0;};
 
+/*
+    Function to read sphere centers and radii from a binary file. 
+    Useful for the Finney packing geometries, as well as for other general sphere packings.
+*/
 void readSpheresBinaryFile(
     char *file_name,
     int  *pn_sphere,
@@ -829,6 +898,9 @@ void readSpheresBinaryFile(
     *pradius = radius;
 }
 
+/*
+    Writes out numbers of spheres, bounding boxes, centers and radii of a packing of spheres.
+*/
 void writeSpheresBinaryFile(
     char *file_base, 
     int zip_status,

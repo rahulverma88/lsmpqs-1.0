@@ -1,4 +1,15 @@
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file createMask.c
 
+     Seems to be an old working file for createMaskUBC.c
+     See that file for details.
+                     
+*/
 /* System headers */
 #include <stdlib.h>
 #include <stdio.h>

@@ -1,4 +1,16 @@
 c***********************************************************************
+c
+c  File:        qss_spatial_derivatives2d.f
+c***********************************************************************
+c  Algorithms to compute the 2D spatial derivative terms in the level 
+c  set equation.
+c 
+c***********************************************************************
+
+c***********************************************************************
+c  Computes the 2D variational normal velocity term, but with constant
+c  theta.
+c***********************************************************************
       subroutine qss2dSetVarNorm(
      &  mask,
      &  mask_x,
@@ -59,6 +71,10 @@ c       } end loop over grid
       end
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the 2D variational normal velocity term, but with spatially
+c  varying theta.
+c***********************************************************************
       subroutine qss2dSetVarNormTheta(
      &  mask,
      &  mask_x,
@@ -123,18 +139,7 @@ c       } end loop over grid
 c***********************************************************************
 
 c***********************************************************************
-c
-c  lsm2dSetVarCurvAdv() 
-c  
-c  Arguments:
-c    *_gb (in):         index range for ghostbox
-c    *_fb (in):         index range for fillbox
-c    index_[xyz](in):  [xyz] coordinates of local (narrow band) points
-c    n*_index(in):    index range of points to loop over in index_*
-c    narrow_band(in): array that marks voxels outside desired fillbox
-c    mark_fb(in):     upper limit narrow band value for voxels in 
-c                     fillbox
-c
+c  Computes the 2D variational curvature and convective velocity terms
 c***********************************************************************
       subroutine qss2dSetVarCurvAdv(
      &  mask,
@@ -235,6 +240,10 @@ c       } end loop over grid
       end
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the right hand side of the 2D level set equation, 
+c  with second order accurate stencil for  variational a, b and 
+c  convective velocity terms
 c***********************************************************************
       subroutine qss2dGetRHS2nd(
      &  phi,
@@ -476,6 +485,11 @@ c } end subroutine
 c***********************************************************************
 
 c***********************************************************************
+c  Compute the right hand side of the 2D level set equation, with 
+c  second order accurate stencils, and constant zero contact angle 
+c  everywhere - so a and b are not varying
+c  and the convective velocity term does not exist.
+c***********************************************************************
       subroutine qss2dGetRHS2ndconst(
      &  phi,
      &  vel_n,
@@ -687,6 +701,10 @@ c     } end loop over grid
 c } end subroutine
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the right hand side of the 2D level set equation, 
+c  with third order accurate stencil for  variational a, b and 
+c  convective velocity terms
 c***********************************************************************
       subroutine qss2dgetRHS3rd(
      &  phi,
@@ -1047,6 +1065,11 @@ c } end subroutine
 c***********************************************************************
 
 c***********************************************************************
+c  Compute the right hand side of the 2D level set equation, with 
+c  third order accurate stencils, and constant zero contact angle 
+c  everywhere - so a and b are not varying
+c  and the convective velocity term does not exist.
+c***********************************************************************
       subroutine qss2dgetRHS3rdConst(
      &  phi,
      &  vel_n,
@@ -1379,6 +1402,9 @@ c } end subroutine
 c***********************************************************************
 
 c***********************************************************************
+c  Computes the 2D central differencing gradient. Applied to curvature
+c  term calculation
+c***********************************************************************
       subroutine qss2dCentralGradOrder2(
      &  phi_x, phi_y,
      &  ilo_grad_phi_gb, ihi_grad_phi_gb, 
@@ -1429,6 +1455,8 @@ c     } end loop over grid
 c } end subroutine
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the 2D signed linear extrapolation boundary conditions
 c***********************************************************************
       subroutine qss2dSignedLinearExtrapolation(
      &  phi,

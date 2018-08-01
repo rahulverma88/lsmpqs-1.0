@@ -7,10 +7,10 @@
 extern "C" {
 #endif
 
-/*! \file lsm_tvd_runge_kutta3d.h
+/*! \file qss_tvd_runge_kutta3d.h
  *
  * \brief
- * @ref lsm_tvd_runge_kutta3d.h provides support for time integration of
+ * @ref qss_tvd_runge_kutta3d.h provides support for time integration of
  * partial differential equations in three space dimensions via 
  * total-variation diminishing Runge-Kutta methods.  Support is provided 
  * for first-, second-, and third-order time integration.
@@ -29,7 +29,7 @@ extern "C" {
 #define QSS3D_TVD_RK3_STAGE3                qss3dtvdrk3stage3_
 
 /*!
- * LSM3D_RK1_STEP() takes a single first-order Runge-Kutta (i.e. Forward
+ * QSS3D_RK1_STEP() takes a single first-order Runge-Kutta (i.e. Forward
  * Euler) step.
  *
  * Arguments:

@@ -1,7 +1,20 @@
-/* Make this so that it works for both 3d and 2d. Should also act as a check for bad
-   input data. At the end of the simulation, this would also write output files */
+/******************************************************************************
+ *
+ *   Author:   Rahul Verma
+ *   Copyright (c) 2018, The University of Texas at Austin. All rights reserved.
+ *
+ ******************************************************************************/
+/*! \file drain_top.c
+
+    Top level function for calling the drainage constant curvature model in both 2D and 3D. 
+    
+    Reads in input data, makes sure everything is consistent. Essentially works as an error
+    check for input data. Also writes out final data step.
+             
+*/
+
    
-/* sSystem headers */
+/* System headers */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>

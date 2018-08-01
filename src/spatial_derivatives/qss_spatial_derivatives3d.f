@@ -1,16 +1,14 @@
 c***********************************************************************
 c
-c  lsm3dSetVarNorm() 
-c  
-c  Arguments:
-c    *_gb (in):         index range for ghostbox
-c    *_fb (in):         index range for fillbox
-c    index_[xyz](in):  [xyz] coordinates of local (narrow band) points
-c    n*_index(in):    index range of points to loop over in index_*
-c    narrow_band(in): array that marks voxels outside desired fillbox
-c    mark_fb(in):     upper limit narrow band value for voxels in 
-c                     fillbox
-c
+c  File:        qss_spatial_derivatives3d.f
+c***********************************************************************
+c  Algorithms to compute the 3D spatial derivative terms in the level 
+c  set equation.
+c 
+c***********************************************************************
+c***********************************************************************
+c  Computes the 3D variational normal velocity term, but with constant
+c  theta.
 c***********************************************************************
       subroutine setVarNorm3d(
      &  mask,
@@ -89,6 +87,9 @@ c       } end loop over grid
       end
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the 3D variational normal velocity term, but with spatially
+c  varying theta.
 c***********************************************************************
       subroutine setVarNorm3dTheta(
      &  mask,
@@ -172,18 +173,7 @@ c       } end loop over grid
 c***********************************************************************
 
 c***********************************************************************
-c
-c  lsm3dSetVarCurvAdv() 
-c  
-c  Arguments:
-c    *_gb (in):         index range for ghostbox
-c    *_fb (in):         index range for fillbox
-c    index_[xyz](in):  [xyz] coordinates of local (narrow band) points
-c    n*_index(in):    index range of points to loop over in index_*
-c    narrow_band(in): array that marks voxels outside desired fillbox
-c    mark_fb(in):     upper limit narrow band value for voxels in 
-c                     fillbox
-c
+c  Computes the 3D variational curvature and convective velocity terms
 c***********************************************************************
       subroutine setVarCurvAdv3d(
      &  mask,
@@ -1023,6 +1013,10 @@ c } end subroutine
 c***********************************************************************
 
 c***********************************************************************
+c  Computes the right hand side of the 3D level set equation, 
+c  with second order accurate stencil for  variational a, b and 
+c  convective velocity terms
+c***********************************************************************
       subroutine getRHS3d2nd(
      &  phi,
      &  vel_n,
@@ -1333,6 +1327,10 @@ c     } end loop over grid
 c } end subroutine
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the right hand side of the 3D level set equation, 
+c  with third order accurate stencil for  variational a, b and 
+c  convective velocity terms
 c***********************************************************************
       subroutine getRHS3d3rd(
      &  phi,
@@ -1819,6 +1817,12 @@ c     } end loop over grid
 c } end subroutine
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the right hand side of the 3D level set equation, 
+c  with fifth order accurate stencil for  variational a, b and 
+c  convective velocity terms
+c
+c  This might not be working. Is not tested.
 c***********************************************************************
       subroutine getRHS3d5th(
      &  phi,
@@ -2383,6 +2387,13 @@ c     } end loop over grid
 c } end subroutine
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the right hand side of the 3D level set equation, 
+c  with fifth order accurate stencil for  variational a, b and 
+c  convective velocity terms
+c
+c  Might not be working. Not tested.
+c
 c***********************************************************************
       subroutine getRHS3d5thcurv4(
      &  phi,
@@ -2969,7 +2980,9 @@ c     } end loop over grid
 c } end subroutine
 c***********************************************************************
 
-
+c***********************************************************************
+c  Computes the 3D central differencing gradient with second order 
+c  accuracy Applied to curvature term calculation.
 c***********************************************************************
       subroutine getCentralGrad3dOrder2(
      &  phi_x, phi_y, phi_z,
@@ -3036,6 +3049,8 @@ c     } end loop over grid
 c } end subroutine
 c***********************************************************************
 
+c***********************************************************************
+c  Computes the 3D signed linear extrapolation boundary conditions
 c***********************************************************************
       subroutine signedLinearExtrapolation3d(
      &  phi,

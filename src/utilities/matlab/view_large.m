@@ -3,7 +3,7 @@ clc; clear; close all;
 grid = readGridFromBinaryFile('grid.gz');
 [mask,nx,ny,nz] = readDataArray('mask.gz');
 saveFile_pre = 'drain2d_';
-readFile = 'data_step_3.gz';
+readFile = 'data_init.gz';
 saveFile_post = strrep(readFile,'data_','');
 saveFile_post = strrep(saveFile_post,'.gz','');
 saveFile = [saveFile_pre saveFile_post];
